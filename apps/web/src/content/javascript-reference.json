@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "scenarioId": "javascript-reference",
+  "title": "const인데, 값이 바뀐다고?",
+  "summary": "변수의 재할당과 객체 속성 변경은 어떻게 다를까요?",
+  "language": "javascript",
+  "languageVersion": "ECMAScript 2023",
+  "topic": "객체 참조 · const",
+  "executionKind": "curated_simulation",
+  "preconditions": [
+    "ECMAScript 2023, 일반 객체 사용",
+    "const 바인딩의 재할당 없이 속성만 변경",
+    "각 단계는 문장 완료 직후, @1은 학습용 객체 식별자이며 메모리 주소가 아님"
+  ],
+  "code": "const original = { count: 1 };\nconst alias = original;\nalias.count += 1;",
+  "visualization": {
+    "type": "variables",
+    "schemaVersion": 1,
+    "fields": [
+      { "name": "original", "type": "Object 참조" },
+      { "name": "alias", "type": "Object 참조" }
+    ]
+  },
+  "steps": [
+    {
+      "id": 0,
+      "line": null,
+      "state": {},
+      "explanation": "아직 객체가 만들어지지 않았습니다. alias를 바꾸면 original은 어떻게 될까요?"
+    },
+    {
+      "id": 1,
+      "line": 1,
+      "state": { "original": "@1 { count: 1 }" },
+      "explanation": "객체 하나를 만들고 original이 참조하게 합니다. @1은 이 시나리오에서 같은 객체를 구별하기 위한 기호입니다."
+    },
+    {
+      "id": 2,
+      "line": 2,
+      "state": { "original": "@1 { count: 1 }", "alias": "@1 { count: 1 }" },
+      "explanation": "객체를 복사하지 않습니다. original과 alias는 같은 객체 @1을 참조합니다."
+    },
+    {
+      "id": 3,
+      "line": 3,
+      "state": { "original": "@1 { count: 2 }", "alias": "@1 { count: 2 }" },
+      "explanation": "alias를 통해 같은 객체의 count를 2로 바꿉니다. original.count도 2입니다. const는 바인딩의 재할당을 막으며 객체의 불변성을 보장하지 않습니다."
+    }
+  ],
+  "review": {
+    "question": "마지막 줄 뒤 original.count는 무엇일까요?",
+    "options": [
+      { "id": "a", "text": "1 · original은 그대로다" },
+      { "id": "b", "text": "2 · 같은 객체를 참조한다" },
+      { "id": "c", "text": "TypeError · const는 속성 변경도 막는다" }
+    ],
+    "answer": "b",
+    "rationale": "alias = original은 같은 객체에 대한 참조를 전달합니다. alias.count 변경은 original.count에도 보입니다. const가 막는 것은 original = 다른객체 같은 재할당이며, 객체 속성 변경은 허용됩니다."
+  },
+  "verification": {
+    "method": "runtime_test",
+    "reference": "tests/runtime/scenarios.test.mjs#javascript-reference",
+    "sources": [
+      "https://tc39.es/ecma262/2023/multipage/ecmascript-language-statements-and-declarations.html#sec-let-and-const-declarations"
+    ]
+  }
+}

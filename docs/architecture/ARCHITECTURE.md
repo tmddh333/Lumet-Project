@@ -9,6 +9,10 @@
 
 ## 2. 단계별 컴포넌트
 
+### M1 구현 범위 (Issue #1)
+
+`apps/web`에 정적 React + TypeScript + Vite PWA를 구현한다. 아래 Stage 1의 API·PostgreSQL은 아직 구현하지 않는다. JSON fixture와 버전 스키마, 단일 재생 reducer, 명시적 renderer registry, 기기 내 선호 저장만 사용한다. `prototype/` 소스가 저장소에 없으므로 PRD/디자인 문서에서 네 화면을 구성했다. 상세 결정과 캐시/검증 경계는 [ADR-0002](../adr/0002-static-react-pwa.md), 실행 방법은 [개발 문서](../development/WEB.md)를 참조한다.
+
 ### Stage 0: UX 프로토타입
 
 ```

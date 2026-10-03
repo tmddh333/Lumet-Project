@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#f7f9fd" />
+    <meta
+      name="description"
+      content="코드를 읽고, 실행 흐름을 관찰하고, 스스로 리뷰하는 무료 개발자 학습 공간."
+    />
+    <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="/icon-192.png" />
+    <title>%BRAND_NAME% · 코드를 이해하는 시간</title>
+    <script>
+      // Apply before first paint; blocked storage still follows the OS.
+      (() => {
+        let preference = "system";
+        try {
+          preference = localStorage.getItem("lumet.theme") || "system";
+        } catch {
+          /* Optional storage. */
+        }
+        const dark =
+          preference === "dark" ||
+          (preference !== "light" &&
+            matchMedia("(prefers-color-scheme: dark)").matches);
+        document.documentElement.dataset.theme = dark ? "dark" : "light";
+        document.querySelector('meta[name="theme-color"]').content = dark
+          ? "#0b1120"
+          : "#f7f9fd";
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <noscript>학습 시나리오를 보려면 JavaScript를 활성화해 주세요.</noscript>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

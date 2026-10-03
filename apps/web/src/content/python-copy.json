@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "scenarioId": "python-copy",
+  "title": "복사한 리스트는 어디까지 같을까?",
+  "summary": "슬라이스로 복사한 리스트와 원본의 변화를 살펴보세요.",
+  "language": "python",
+  "languageVersion": "3.11+",
+  "topic": "리스트 · 얕은 복사",
+  "executionKind": "curated_simulation",
+  "preconditions": [
+    "Python 3.11 이상, 내장 list와 불변 정수 원소",
+    "중첩 리스트 없음; 얕은 복사를 깊은 복사로 일반화하지 않음",
+    "각 단계는 문장 완료 직후, @1/@2는 학습용 리스트 식별자"
+  ],
+  "code": "original = [1, 2]\ncopy = original[:]\ncopy.append(3)",
+  "visualization": {
+    "type": "variables",
+    "schemaVersion": 1,
+    "fields": [
+      { "name": "original", "type": "list[int]" },
+      { "name": "copy", "type": "list[int]" }
+    ]
+  },
+  "steps": [
+    {
+      "id": 0,
+      "line": null,
+      "state": {},
+      "explanation": "아직 리스트가 만들어지지 않았습니다. 복사본에 값을 추가하면 원본도 바뀔까요?"
+    },
+    {
+      "id": 1,
+      "line": 1,
+      "state": { "original": "@1 [1, 2]" },
+      "explanation": "정수 1과 2를 원소로 가진 리스트 @1을 만듭니다."
+    },
+    {
+      "id": 2,
+      "line": 2,
+      "state": { "original": "@1 [1, 2]", "copy": "@2 [1, 2]" },
+      "explanation": "전체 슬라이스 [:]는 새로운 바깥 리스트 @2를 만듭니다. 원소를 깊게 복사하는 것은 아닙니다."
+    },
+    {
+      "id": 3,
+      "line": 3,
+      "state": { "original": "@1 [1, 2]", "copy": "@2 [1, 2, 3]" },
+      "explanation": "copy가 가리키는 별도 리스트 @2에 3을 추가합니다. original의 리스트 @1은 [1, 2]로 유지됩니다."
+    }
+  ],
+  "review": {
+    "question": "copy.append(3) 이후 original의 값은 무엇일까요?",
+    "options": [
+      { "id": "a", "text": "[1, 2] · 원본 리스트는 유지된다" },
+      { "id": "b", "text": "[1, 2, 3] · 원본에도 추가된다" },
+      { "id": "c", "text": "None · append의 반환값으로 바뀐다" }
+    ],
+    "answer": "a",
+    "rationale": "original[:]는 바깥 리스트를 새로 만듭니다. copy.append(3)은 새 리스트만 변경하므로 original은 [1, 2]입니다. 중첩된 가변 객체까지 복사되지는 않으므로 이 결과를 깊은 복사로 해석하면 안 됩니다."
+  },
+  "verification": {
+    "method": "runtime_test",
+    "reference": "tests/runtime/scenarios.test.mjs#python-copy",
+    "sources": ["https://docs.python.org/3.11/tutorial/introduction.html#lists"]
+  }
+}
