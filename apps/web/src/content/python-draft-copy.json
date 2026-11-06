@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 2,
+  "scenarioId": "python-draft-copy",
+  "title": "초안 편집용 데이터 복사",
+  "summary": "초안만 수정하고 원본은 보존해야 하는 변경을 검토해 보세요.",
+  "language": "python",
+  "languageVersion": "3.11+",
+  "topic": "복사·중첩 객체",
+  "level": "practice",
+  "executionKind": "curated_simulation",
+  "preconditions": [
+    "Python 3.11 이상, dict 안에 list[str] 하나가 있는 데이터",
+    "원본을 유지하면서 초안의 태그만 추가하는 요구사항",
+    "각 단계는 문장 완료 직후의 상태"
+  ],
+  "code": "original = {\"tags\": [\"work\"]}\ndraft = original.copy()\ndraft[\"tags\"].append(\"urgent\")",
+  "visualization": {
+    "type": "variables",
+    "schemaVersion": 1,
+    "fields": [
+      {
+        "name": "original",
+        "type": "dict[str, list[str]]"
+      },
+      {
+        "name": "draft",
+        "type": "dict[str, list[str]]"
+      }
+    ]
+  },
+  "steps": [
+    {
+      "id": 0,
+      "line": null,
+      "state": {},
+      "explanation": "먼저 제출한 리뷰와 비교할 준비를 해 보세요. 아직 샘플을 진행하지 않았습니다."
+    },
+    {
+      "id": 1,
+      "line": 1,
+      "state": {
+        "original": "{\"tags\": [\"work\"]}"
+      },
+      "explanation": "원본 사전 안에 tags 리스트를 만듭니다."
+    },
+    {
+      "id": 2,
+      "line": 2,
+      "state": {
+        "original": "{\"tags\": [\"work\"]}",
+        "draft": "{\"tags\": [\"work\"]}"
+      },
+      "explanation": "바깥 사전은 새로 복사되지만 내부 tags 리스트는 공유됩니다."
+    },
+    {
+      "id": 3,
+      "line": 3,
+      "state": {
+        "original": "{\"tags\": [\"work\", \"urgent\"]}",
+        "draft": "{\"tags\": [\"work\", \"urgent\"]}"
+      },
+      "explanation": "초안을 통해 공유 리스트를 수정해서 원본 태그에도 urgent가 추가됩니다."
+    }
+  ],
+  "review": {
+    "mode": "pull_request",
+    "filePath": "draft.py",
+    "context": "초안 생성 시 복사 코드를 간단하게 바꾸었습니다. 이후 태그 편집 흐름을 검토해 주세요.",
+    "requirements": [
+      "초안에만 urgent 태그를 추가해야 합니다.",
+      "original의 태그는 [\"work\"]로 유지해야 합니다."
+    ],
+    "beforeCode": "import copy\noriginal = {\"tags\": [\"work\"]}\ndraft = copy.deepcopy(original)\ndraft[\"tags\"].append(\"urgent\")",
+    "hints": [
+      "바깥 객체가 달라지면 내부 객체도 모두 달라질까요?",
+      "실제로 변경하는 객체가 사전인지, 그 안의 리스트인지 짚어 보세요."
+    ],
+    "finding": {
+      "lines": [2, 3],
+      "category": "state",
+      "rationale": "dict.copy는 얕은 복사입니다. 새 사전도 원본의 tags 리스트를 참조하므로 리스트 추가가 원본으로 전파됩니다.",
+      "condition": "얕게 복사한 사전 안의 가변 리스트를 변경하는 경우",
+      "impact": "아직 저장하지 않은 초안의 변경이 원본에도 반영됩니다.",
+      "test": "초안 편집 후 original은 {\"tags\": [\"work\"]}, draft는 {\"tags\": [\"work\", \"urgent\"]}인지 검사합니다."
+    },
+    "fix": {
+      "code": "import copy\noriginal = {\"tags\": [\"work\"]}\ndraft = copy.deepcopy(original)\ndraft[\"tags\"].append(\"urgent\")",
+      "explanation": "이 데이터에서는 deepcopy로 내부 리스트도 복사할 수 있습니다. 필요한 필드만 명시적으로 새로 만드는 방법도 요구사항을 만족하면 타당합니다."
+    }
+  },
+  "verification": {
+    "method": "runtime_test",
+    "reference": "tests/runtime/pr-scenarios.test.mjs#python-draft-copy",
+    "sources": ["https://docs.python.org/3.11/library/copy.html"]
+  }
+}

@@ -28,6 +28,11 @@ function Variables({ spec, step, previous }: RendererProps) {
             </dt>
             <dd>
               <code>{value ?? "아직 선언 전"}</code>
+              {changed && previous?.state[field.name] !== undefined && (
+                <small className="previous-value">
+                  이전: <code>{previous.state[field.name]}</code> → 현재
+                </small>
+              )}
               {changed && <span className="change-label">변경</span>}
             </dd>
           </div>

@@ -1,5 +1,10 @@
 // @vitest-environment node
-import { scenarios, stacks } from "../src/content/catalog";
+import {
+  scenarios,
+  stacks,
+  quizScenarios,
+  prScenarios,
+} from "../src/content/catalog";
 import { executionLabels } from "../src/domain/scenario";
 import {
   validateScenario,
@@ -7,6 +12,19 @@ import {
 } from "../scripts/validate-fixtures.mjs";
 
 describe("versioned language-independent content", () => {
+  it("contains two independently verified practical reviews for each supported language", () => {
+    expect(scenarios).toHaveLength(9);
+    for (const language of ["java", "javascript", "python"]) {
+      expect(
+        prScenarios.filter((item) => item.language === language),
+      ).toHaveLength(2);
+    }
+    for (const scenario of prScenarios) {
+      const fixture = structuredClone(scenario);
+      fixture.review.finding.lines = [scenario.code.split("\n").length + 1];
+      expect(() => validateScenario(fixture)).toThrow("outside the code");
+    }
+  });
   it("validates every bundled JSON fixture and keeps languages isolated", () => {
     expect(loadFixtures()).toHaveLength(scenarios.length);
     expect(new Set(scenarios.map((scenario) => scenario.language)).size).toBe(
@@ -34,7 +52,7 @@ describe("versioned language-independent content", () => {
     [
       "scenario version",
       (s: Record<string, unknown>) => {
-        s.schemaVersion = 2;
+        s.schemaVersion = 99;
       },
     ],
     [
@@ -58,7 +76,7 @@ describe("versioned language-independent content", () => {
     expect(() => validateScenario(fixture)).toThrow();
   });
   it("rejects out-of-range highlights and answers missing from the options", () => {
-    const fixture = structuredClone(scenarios[0]!);
+    const fixture = structuredClone(quizScenarios[0]!);
     fixture.steps[1]!.line = 100;
     expect(() => validateScenario(fixture)).toThrow("outside the code");
     fixture.steps[1]!.line = 1;

@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 2,
+  "scenarioId": "java-coupon-equality",
+  "title": "쿠폰 비교 로직 정리",
+  "summary": "쿠폰 코드를 비교하는 작은 변경을 검토해 보세요.",
+  "language": "java",
+  "languageVersion": "17",
+  "topic": "객체 동등성",
+  "level": "practice",
+  "executionKind": "curated_simulation",
+  "preconditions": [
+    "Java 17, 메서드 내부의 코드이며 input은 null이 아님",
+    "외부 입력을 new String으로 재현; 문자열 내용은 SAVE10",
+    "각 단계는 문장 완료 직후의 상태"
+  ],
+  "code": "String input = new String(\"SAVE10\");\nString coupon = \"SAVE10\";\nboolean accepted = input == coupon;",
+  "visualization": {
+    "type": "variables",
+    "schemaVersion": 1,
+    "fields": [
+      {
+        "name": "input",
+        "type": "String"
+      },
+      {
+        "name": "coupon",
+        "type": "String"
+      },
+      {
+        "name": "accepted",
+        "type": "boolean"
+      }
+    ]
+  },
+  "steps": [
+    {
+      "id": 0,
+      "line": null,
+      "state": {},
+      "explanation": "먼저 제출한 리뷰와 비교할 준비를 해 보세요. 아직 샘플을 진행하지 않았습니다."
+    },
+    {
+      "id": 1,
+      "line": 1,
+      "state": {
+        "input": "\"SAVE10\""
+      },
+      "explanation": "new String으로 별도의 String 객체를 만듭니다."
+    },
+    {
+      "id": 2,
+      "line": 2,
+      "state": {
+        "input": "\"SAVE10\"",
+        "coupon": "\"SAVE10\""
+      },
+      "explanation": "두 문자열의 내용은 같지만 같은 객체라고 보장되지 않습니다."
+    },
+    {
+      "id": 3,
+      "line": 3,
+      "state": {
+        "input": "\"SAVE10\"",
+        "coupon": "\"SAVE10\"",
+        "accepted": "false"
+      },
+      "explanation": "==는 참조의 동일성을 비교합니다. 이 입력은 별도 객체이므로 accepted가 false가 됩니다."
+    }
+  ],
+  "review": {
+    "mode": "pull_request",
+    "filePath": "CouponCheck.java",
+    "context": "쿠폰 코드 비교를 간단한 연산자로 정리한 변경입니다. 외부 입력을 재현한 샘플과 함께 검토해 주세요.",
+    "requirements": [
+      "내용이 같은 쿠폰 코드는 승인해야 합니다.",
+      "내용이 다른 코드는 거절해야 합니다."
+    ],
+    "beforeCode": "String input = new String(\"SAVE10\");\nString coupon = \"SAVE10\";\nboolean accepted = input.equals(coupon);",
+    "hints": [
+      "입력값이 만들어진 경로도 비교 결과에 영향을 줄까요?",
+      "값이 같다는 것과 같은 객체라는 것을 구분해 보세요."
+    ],
+    "finding": {
+      "lines": [3],
+      "category": "logic",
+      "rationale": "String의 ==는 내용이 아닌 참조를 비교합니다. 외부에서 생성한 동등한 문자열이 다른 객체이면 정상 쿠폰을 거절합니다.",
+      "condition": "내용은 같지만 서로 다른 String 객체인 경우",
+      "impact": "사용자가 올바른 쿠폰을 입력해도 승인이 거절됩니다.",
+      "test": "new String(\"SAVE10\")은 승인되고 new String(\"OTHER\")는 거절되는지 확인합니다."
+    },
+    "fix": {
+      "code": "String input = new String(\"SAVE10\");\nString coupon = \"SAVE10\";\nboolean accepted = input.equals(coupon);",
+      "explanation": "null이 아닌 String 내용 비교에는 equals를 사용합니다. null 입력 허용 여부는 별도로 정해야 합니다."
+    }
+  },
+  "verification": {
+    "method": "runtime_test",
+    "reference": "tests/runtime/pr-scenarios.test.mjs#java-coupon-equality",
+    "sources": [
+      "https://docs.oracle.com/javase/specs/jls/se17/html/jls-15.html#jls-15.21.3"
+    ]
+  }
+}

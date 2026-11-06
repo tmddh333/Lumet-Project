@@ -15,6 +15,8 @@
 
 ### Stage 0: UX 프로토타입
 
+후속 구현은 시나리오 v2의 `quiz`/`pull_request` 리뷰와 세션 내 학습 Context를 추가한다. 영구 진도는 명시적 동의와 필드 허용 목록을 거쳐 저장하며 리뷰 문장은 세션 메모리에만 둔다. 실무 추적의 공개 조건과 테스트 경계는 [ADR-0003](../adr/0003-reviewer-first-learning.md)에 기록한다.
+
 ```
 Browser (mobile/desktop)
   └─ Static HTML/CSS/JS prototype

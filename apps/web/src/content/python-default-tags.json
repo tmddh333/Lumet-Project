@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 2,
+  "scenarioId": "python-default-tags",
+  "title": "태그 추가 함수에 기본값 도입",
+  "summary": "인자를 생략해도 호출마다 독립적인 태그 목록을 얻을 수 있을까요?",
+  "language": "python",
+  "languageVersion": "3.11+",
+  "topic": "함수·가변 기본값",
+  "level": "practice",
+  "executionKind": "curated_simulation",
+  "preconditions": [
+    "Python 3.11 이상, 명시적 목록 없이 두 번 호출",
+    "defaultTags는 함수 __defaults__의 리스트를 관찰한 값",
+    "함수 정의 완료와 각 호출 완료 직후를 표시"
+  ],
+  "code": "def add_tag(tag, tags=[]):\n    tags.append(tag)\n    return tags\nfirst = add_tag(\"work\")\nsecond = add_tag(\"home\")",
+  "visualization": {
+    "type": "variables",
+    "schemaVersion": 1,
+    "fields": [
+      {
+        "name": "defaultTags",
+        "type": "함수 기본 리스트"
+      },
+      {
+        "name": "first",
+        "type": "list[str]"
+      },
+      {
+        "name": "second",
+        "type": "list[str]"
+      }
+    ]
+  },
+  "steps": [
+    {
+      "id": 0,
+      "line": null,
+      "state": {},
+      "explanation": "먼저 제출한 리뷰와 비교할 준비를 해 보세요. 아직 샘플을 진행하지 않았습니다."
+    },
+    {
+      "id": 1,
+      "line": 3,
+      "state": {
+        "defaultTags": "[]"
+      },
+      "explanation": "함수를 정의할 때 기본 리스트 객체가 한 번 만들어집니다."
+    },
+    {
+      "id": 2,
+      "line": 4,
+      "state": {
+        "defaultTags": "[\"work\"]",
+        "first": "[\"work\"]"
+      },
+      "explanation": "첫 호출은 기본 리스트에 work를 추가하고 그 리스트를 반환합니다."
+    },
+    {
+      "id": 3,
+      "line": 5,
+      "state": {
+        "defaultTags": "[\"work\", \"home\"]",
+        "first": "[\"work\", \"home\"]",
+        "second": "[\"work\", \"home\"]"
+      },
+      "explanation": "두 번째 호출도 같은 기본 리스트를 사용합니다. first가 가리키는 리스트까지 함께 바뀝니다."
+    }
+  ],
+  "review": {
+    "mode": "pull_request",
+    "filePath": "tags.py",
+    "context": "호출부에서 빈 리스트 전달을 생략할 수 있도록 기본 인자를 추가했습니다.",
+    "requirements": [
+      "인자를 생략한 호출은 서로 독립적인 목록을 반환해야 합니다.",
+      "명시적으로 전달한 리스트는 기존 방식대로 수정할 수 있습니다."
+    ],
+    "beforeCode": "def add_tag(tag, tags):\n    tags.append(tag)\n    return tags\nfirst = add_tag(\"work\", [])\nsecond = add_tag(\"home\", [])",
+    "hints": [
+      "기본 인자는 함수 호출 때마다 새로 만들어질까요?",
+      "첫 번째 호출이 돌려준 객체가 두 번째 호출 뒤에도 그대로인지 확인해 보세요."
+    ],
+    "finding": {
+      "lines": [1, 2],
+      "category": "state",
+      "rationale": "가변 기본 인자는 함수 정의 시 한 번 평가됩니다. 인자를 생략한 호출들이 같은 리스트를 수정하므로 이전 호출의 결과에도 다음 태그가 추가됩니다.",
+      "condition": "tags 인자를 생략하고 함수를 여러 번 호출하는 경우",
+      "impact": "서로 독립적이어야 할 목록 사이에 태그가 섞입니다.",
+      "test": "두 번 호출한 뒤 first == [\"work\"], second == [\"home\"], first is not second인지 확인합니다."
+    },
+    "fix": {
+      "code": "def add_tag(tag, tags=None):\n    if tags is None:\n        tags = []\n    tags.append(tag)\n    return tags\nfirst = add_tag(\"work\")\nsecond = add_tag(\"home\")",
+      "explanation": "None을 기본값으로 두고 호출 내부에서 새 리스트를 만듭니다. 명시적으로 전달한 빈 리스트도 유지하도록 is None으로 검사합니다."
+    }
+  },
+  "verification": {
+    "method": "runtime_test",
+    "reference": "tests/runtime/pr-scenarios.test.mjs#python-default-tags",
+    "sources": [
+      "https://docs.python.org/3.11/tutorial/controlflow.html#default-argument-values"
+    ]
+  }
+}

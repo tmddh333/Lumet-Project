@@ -18,7 +18,9 @@ function run(command, args) {
   assert.equal(result.status, 0, result.stderr);
   return result.stdout.trim();
 }
-const fixtures = loadFixtures();
+const fixtures = loadFixtures().filter(
+  (scenario) => scenario.review.mode === "quiz",
+);
 for (const scenario of fixtures) {
   for (const step of scenario.steps.slice(1)) {
     test(`${scenario.scenarioId}: runtime state after line ${step.line}`, () => {

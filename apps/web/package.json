@@ -8,7 +8,7 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint . --max-warnings 0",
     "test": "vitest run",
-    "test:runtime": "node --test tests/runtime/scenarios.test.mjs",
+    "test:runtime": "node --test tests/runtime/*.test.mjs",
     "validate:fixtures": "node scripts/validate-fixtures.mjs",
     "build": "npm run validate:fixtures && tsc --noEmit && vite build && node scripts/build-pwa.mjs",
     "preview": "vite preview --host 127.0.0.1 --port 4173 --strictPort",

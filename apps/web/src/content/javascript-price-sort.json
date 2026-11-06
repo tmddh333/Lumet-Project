@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 2,
+  "scenarioId": "javascript-price-sort",
+  "title": "가격순 보기 추가",
+  "summary": "가격순 목록을 만드는 변경이 원본에 미치는 영향을 검토하세요.",
+  "language": "javascript",
+  "languageVersion": "ECMAScript 2023",
+  "topic": "배열·부작용",
+  "level": "practice",
+  "executionKind": "curated_simulation",
+  "preconditions": [
+    "ECMAScript 2023, 숫자 원소만 있는 배열",
+    "원본 배열은 기존 표시 순서를 유지해야 함",
+    "각 단계는 문장 완료 직후의 상태"
+  ],
+  "code": "const prices = [30, 10, 20];\nconst sorted = prices.sort((a, b) => a - b);\nconst cheapest = sorted[0];",
+  "visualization": {
+    "type": "variables",
+    "schemaVersion": 1,
+    "fields": [
+      {
+        "name": "prices",
+        "type": "number[]"
+      },
+      {
+        "name": "sorted",
+        "type": "number[]"
+      },
+      {
+        "name": "cheapest",
+        "type": "number"
+      }
+    ]
+  },
+  "steps": [
+    {
+      "id": 0,
+      "line": null,
+      "state": {},
+      "explanation": "먼저 제출한 리뷰와 비교할 준비를 해 보세요. 아직 샘플을 진행하지 않았습니다."
+    },
+    {
+      "id": 1,
+      "line": 1,
+      "state": {
+        "prices": "[30, 10, 20]"
+      },
+      "explanation": "prices는 원래 표시 순서를 담습니다."
+    },
+    {
+      "id": 2,
+      "line": 2,
+      "state": {
+        "prices": "[10, 20, 30]",
+        "sorted": "[10, 20, 30]"
+      },
+      "explanation": "sort는 원본 배열을 제자리에서 변경하고 그 배열을 반환합니다. prices와 sorted는 같은 배열입니다."
+    },
+    {
+      "id": 3,
+      "line": 3,
+      "state": {
+        "prices": "[10, 20, 30]",
+        "sorted": "[10, 20, 30]",
+        "cheapest": "10"
+      },
+      "explanation": "최저가는 10으로 맞지만, 원본 표시 순서가 바뀌었다는 부작용은 남아 있습니다."
+    }
+  ],
+  "review": {
+    "mode": "pull_request",
+    "filePath": "prices.js",
+    "context": "가격순 보기에서 최저가를 함께 표시하도록 정렬 코드를 정리했습니다.",
+    "requirements": [
+      "가격순 결과는 오름차순이어야 합니다.",
+      "원본 prices의 표시 순서는 유지해야 합니다."
+    ],
+    "beforeCode": "const prices = [30, 10, 20];\nconst sorted = [...prices].sort((a, b) => a - b);\nconst cheapest = sorted[0];",
+    "hints": [
+      "결과 값이 맞더라도 원본 상태는 괜찮을까요?",
+      "호출한 배열 메서드가 원본을 변경하는지 확인해 보세요."
+    ],
+    "finding": {
+      "lines": [2],
+      "category": "state",
+      "rationale": "sort는 원본 배열을 변경합니다. 최저가가 맞더라도 다른 화면이 참조하는 원래 목록의 순서를 잃습니다.",
+      "condition": "같은 prices를 기존 순서 화면에서도 사용하는 경우",
+      "impact": "가격순 보기를 열면 기존 목록의 순서까지 달라집니다.",
+      "test": "정렬 후 sorted는 [10, 20, 30], prices는 [30, 10, 20]인지 따로 검사합니다."
+    },
+    "fix": {
+      "code": "const prices = [30, 10, 20];\nconst sorted = [...prices].sort((a, b) => a - b);\nconst cheapest = sorted[0];",
+      "explanation": "숫자 배열을 얕게 복사한 뒤 정렬합니다. 이 예제의 원소는 불변 숫자이므로 바깥 배열 복사로 충분합니다."
+    }
+  },
+  "verification": {
+    "method": "runtime_test",
+    "reference": "tests/runtime/pr-scenarios.test.mjs#javascript-price-sort",
+    "sources": [
+      "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort"
+    ]
+  }
+}

@@ -7,6 +7,8 @@ import { Home } from "./screens/Home";
 import { StackPicker } from "./screens/StackPicker";
 import { TracePlayer } from "./screens/TracePlayer";
 import { ReviewChallenge } from "./screens/ReviewChallenge";
+import { PullRequestChallenge } from "./screens/PullRequestChallenge";
+import { LearningProvider, useLearning } from "./hooks/useLearning";
 import { Icon, type IconName } from "./components/Icon";
 
 function readInterests(): string[] {
@@ -35,14 +37,33 @@ const tabs: { route: string; text: string; icon: IconName }[] = [
 ];
 
 export default function App() {
+  return (
+    <LearningProvider>
+      <AppShell />
+    </LearningProvider>
+  );
+}
+
+function AppShell() {
+  const { progress } = useLearning();
   const [hash, setHash] = useState(() => location.hash.slice(1) || "home");
   const [selected, setSelected] = useState<string[]>([]);
   const [interests, setInterests] = useState(readInterests);
   const [storageFailed, setStorageFailed] = useState(false);
   const theme = useTheme();
   const main = useRef<HTMLElement>(null);
-  const [page = "home", scenarioId] = hash.split("/");
+  const [requestedPage = "home", scenarioId] = hash.split("/");
   const scenario = findScenario(scenarioId);
+  const lockedTrace =
+    requestedPage === "trace" &&
+    scenario?.review.mode === "pull_request" &&
+    !progress.lessons[scenario.scenarioId]?.reviewed;
+  const page = lockedTrace ? "review" : requestedPage;
+
+  useEffect(() => {
+    if (lockedTrace && scenarioId)
+      window.location.replace(`#review/${scenarioId}`);
+  }, [lockedTrace, scenarioId]);
 
   useEffect(() => {
     const navigate = () => setHash(location.hash.slice(1) || "home");
@@ -130,8 +151,22 @@ export default function App() {
         {page === "trace" && scenario && (
           <TracePlayer key={scenario.scenarioId} scenario={scenario} />
         )}
-        {page === "review" && scenario && (
-          <ReviewChallenge key={scenario.scenarioId} scenario={scenario} />
+        {lockedTrace && (
+          <p className="unavailable">
+            실전 리뷰는 먼저 내 의견을 제출한 뒤 상태 변화를 확인합니다.
+          </p>
+        )}
+        {page === "review" && scenario?.review.mode === "quiz" && (
+          <ReviewChallenge
+            key={scenario.scenarioId}
+            scenario={{ ...scenario, review: scenario.review }}
+          />
+        )}
+        {page === "review" && scenario?.review.mode === "pull_request" && (
+          <PullRequestChallenge
+            key={scenario.scenarioId}
+            scenario={{ ...scenario, review: scenario.review }}
+          />
         )}
         {(!validPage ||
           ((page === "trace" || page === "review") && !scenario)) && (

@@ -1,7 +1,13 @@
 import { executionLabels, type Scenario } from "../domain/scenario";
 import { stackName } from "../content/catalog";
 
-export function ScenarioInfo({ scenario }: { scenario: Scenario }) {
+export function ScenarioInfo({
+  scenario,
+  hideReferences = false,
+}: {
+  scenario: Scenario;
+  hideReferences?: boolean;
+}) {
   return (
     <>
       <p className="eyebrow">
@@ -23,15 +29,17 @@ export function ScenarioInfo({ scenario }: { scenario: Scenario }) {
           저장소의 언어별 런타임 테스트로 샘플의 각 상태를 대조합니다.
           화면에서는 미리 작성한 단계를 재생합니다.
         </p>
-        <p>
-          공식 문서{" "}
-          {scenario.verification.sources.map((url, index) => (
-            <a key={url} href={url} target="_blank" rel="noreferrer">
-              근거 {index + 1}
-              <span className="sr-only"> (새 탭)</span>
-            </a>
-          ))}
-        </p>
+        {!hideReferences && (
+          <p>
+            공식 문서{" "}
+            {scenario.verification.sources.map((url, index) => (
+              <a key={url} href={url} target="_blank" rel="noreferrer">
+                근거 {index + 1}
+                <span className="sr-only"> (새 탭)</span>
+              </a>
+            ))}
+          </p>
+        )}
       </details>
     </>
   );

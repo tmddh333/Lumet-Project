@@ -1,0 +1,118 @@
+{
+  "schemaVersion": 2,
+  "scenarioId": "javascript-search-race",
+  "title": "검색 자동완성에 원격 조회 연결",
+  "summary": "빠르게 입력해도 최신 검색 결과가 유지되는지 검토해 보세요.",
+  "language": "javascript",
+  "languageVersion": "ECMAScript 2023",
+  "topic": "비동기·응답 순서",
+  "level": "practice",
+  "executionKind": "curated_simulation",
+  "preconditions": [
+    "fetchResults와 resolveRequest는 네트워크 없이 제어하는 Promise 테스트 더블",
+    "6~11행은 r, re를 연속 요청하고 응답 순서를 제어하는 재현 코드",
+    "results는 표시할 목록, pending은 테스트 더블에 남은 요청 키",
+    "모든 요청은 성공하며 같은 검색어 중복 요청은 이 재현 범위 밖"
+  ],
+  "code": "let results = [];\nasync function search(query) {\n  const data = await fetchResults(query);\n  results = data;\n}\nconst first = search(\"r\");\nconst second = search(\"re\");\nresolveRequest(\"re\", [\"react\"]);\nawait second;\nresolveRequest(\"r\", [\"ruby\"]);\nawait first;",
+  "visualization": {
+    "type": "variables",
+    "schemaVersion": 1,
+    "fields": [
+      {
+        "name": "results",
+        "type": "표시 목록"
+      },
+      {
+        "name": "pending",
+        "type": "테스트 대기 요청"
+      }
+    ]
+  },
+  "steps": [
+    {
+      "id": 0,
+      "line": null,
+      "state": {},
+      "explanation": "먼저 제출한 리뷰와 비교할 준비를 해 보세요. 아직 샘플을 진행하지 않았습니다."
+    },
+    {
+      "id": 1,
+      "line": 1,
+      "state": {
+        "results": "[]",
+        "pending": "[]"
+      },
+      "explanation": "표시 목록이 비어 있습니다."
+    },
+    {
+      "id": 2,
+      "line": 6,
+      "state": {
+        "results": "[]",
+        "pending": "[\"r\"]"
+      },
+      "explanation": "r 요청을 시작했습니다. 응답은 아직 도착하지 않았습니다."
+    },
+    {
+      "id": 3,
+      "line": 7,
+      "state": {
+        "results": "[]",
+        "pending": "[\"r\", \"re\"]"
+      },
+      "explanation": "re 요청도 시작했습니다. 사용자의 최신 검색어는 re입니다."
+    },
+    {
+      "id": 4,
+      "line": 9,
+      "state": {
+        "results": "[\"react\"]",
+        "pending": "[\"r\"]"
+      },
+      "explanation": "두 번째 요청이 먼저 완료되어 react를 표시합니다. 첫 번째 요청은 아직 대기 중입니다."
+    },
+    {
+      "id": 5,
+      "line": 11,
+      "state": {
+        "results": "[\"ruby\"]",
+        "pending": "[]"
+      },
+      "explanation": "늦게 완료된 첫 번째 요청이 ruby로 덮어씁니다. 최신 검색어 re와 표시 결과가 맞지 않습니다."
+    }
+  ],
+  "review": {
+    "mode": "pull_request",
+    "filePath": "search.js",
+    "context": "로컬 검색을 비동기 조회로 교체했습니다. 아래에는 요청을 두 번 보내는 재현 코드도 포함되어 있습니다.",
+    "requirements": [
+      "마지막으로 입력한 검색어의 결과를 표시해야 합니다.",
+      "앞선 요청이 늦게 도착해도 최신 결과를 덮어쓰면 안 됩니다."
+    ],
+    "beforeCode": "let results = [];\nfunction search(query) {\n  results = localSearch(query);\n}",
+    "hints": [
+      "시작한 순서와 완료되는 순서가 항상 같을까요?",
+      "서로 겹친 두 호출이 같은 화면 상태에 쓰는 순간을 비교해 보세요."
+    ],
+    "finding": {
+      "lines": [2, 3, 4],
+      "category": "async",
+      "rationale": "각 search 호출은 서로 독립적으로 대기합니다. 완료 시 최신 요청인지 확인하지 않고 results를 쓰면, 과거 요청이 최신 결과를 덮어쓸 수 있습니다.",
+      "condition": "첫 번째 검색 응답이 두 번째 응답보다 늦게 도착하는 경우",
+      "impact": "최신 검색어와 다른 오래된 결과가 화면에 표시됩니다.",
+      "test": "두 요청의 완료 순서를 뒤집어도 마지막 요청 re의 결과 react가 유지되는지 검사합니다."
+    },
+    "fix": {
+      "code": "let results = [];\nlet latestRequest = 0;\nasync function search(query) {\n  const request = ++latestRequest;\n  const data = await fetchResults(query);\n  if (request === latestRequest) {\n    results = data;\n  }\n}\nconst first = search(\"r\");\nconst second = search(\"re\");\nresolveRequest(\"re\", [\"react\"]);\nawait second;\nresolveRequest(\"r\", [\"ruby\"]);\nawait first;",
+      "explanation": "호출마다 증가하는 요청 번호를 만들고 최신 요청일 때만 반영합니다. 취소 등 다른 방법도 가능하지만 최종 반영 조건을 검증해야 합니다."
+    }
+  },
+  "verification": {
+    "method": "runtime_test",
+    "reference": "tests/runtime/pr-scenarios.test.mjs#javascript-search-race",
+    "sources": [
+      "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function"
+    ]
+  }
+}

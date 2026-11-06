@@ -30,12 +30,19 @@ export function validateScenario(scenario) {
     Object.keys(scenario.steps[0].state).length
   )
     throw new Error("Initial state must be empty");
-  const choices = scenario.review.options.map((option) => option.id);
-  if (
-    new Set(choices).size !== choices.length ||
-    !choices.includes(scenario.review.answer)
-  )
-    throw new Error("Invalid review answer/options");
+  if (scenario.review.mode === "quiz") {
+    const choices = scenario.review.options.map((option) => option.id);
+    if (
+      new Set(choices).size !== choices.length ||
+      !choices.includes(scenario.review.answer)
+    )
+      throw new Error("Invalid review answer/options");
+  } else {
+    if (scenario.review.finding.lines.some((line) => line > lines))
+      throw new Error("Review finding is outside the code");
+    if (scenario.review.fix.code === scenario.code)
+      throw new Error("Correction must change the code");
+  }
   return scenario;
 }
 

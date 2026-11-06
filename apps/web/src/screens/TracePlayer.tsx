@@ -1,4 +1,6 @@
+import { useEffect } from "react";
 import type { Scenario } from "../domain/scenario";
+import { useLearning } from "../hooks/useLearning";
 import { usePlayback } from "../hooks/usePlayback";
 import { CodeBlock } from "../components/CodeBlock";
 import { ScenarioInfo } from "../components/ScenarioInfo";
@@ -6,7 +8,19 @@ import { Visualization } from "../components/Visualization";
 import { Icon } from "../components/Icon";
 
 export function TracePlayer({ scenario }: { scenario: Scenario }) {
-  const player = usePlayback(scenario.steps.length);
+  const { progress, recordStep, visit } = useLearning();
+  const player = usePlayback(
+    scenario.steps.length,
+    progress.lessons[scenario.scenarioId]?.step ?? 0,
+  );
+  useEffect(
+    () => visit(scenario.scenarioId, "trace"),
+    [scenario.scenarioId, visit],
+  );
+  useEffect(
+    () => recordStep(scenario.scenarioId, player.index),
+    [scenario.scenarioId, player.index, recordStep],
+  );
   const step = scenario.steps[player.index];
   if (!step) return <p role="alert">시나리오 단계를 읽을 수 없습니다.</p>;
   const completed = player.index === player.last;

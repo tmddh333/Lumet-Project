@@ -2,8 +2,16 @@ import { useEffect, useReducer, useState } from "react";
 import { createPlayback, playbackReducer } from "../domain/playback";
 
 // The player is keyed by scenarioId. Leaving its route unmounts it.
-export function usePlayback(length: number) {
-  const [state, dispatch] = useReducer(playbackReducer, length, createPlayback);
+export function usePlayback(length: number, initialIndex = 0) {
+  const [state, dispatch] = useReducer(
+    playbackReducer,
+    { length, initialIndex },
+    (initial) =>
+      playbackReducer(createPlayback(initial.length), {
+        type: "seek",
+        index: initial.initialIndex,
+      }),
+  );
   const [speed, setSpeed] = useState(1);
   useEffect(() => {
     if (!state.playing) return;
