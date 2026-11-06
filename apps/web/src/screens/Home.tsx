@@ -1,6 +1,13 @@
 import brand from "../brand.json";
-import { scenarios, stackName } from "../content/catalog";
+import {
+  scenarios,
+  quizScenarios,
+  prScenarios,
+  stackName,
+  stacks,
+} from "../content/catalog";
 import { Icon } from "../components/Icon";
+import { LearningProgress } from "../components/LearningProgress";
 
 export function Home() {
   return (
@@ -29,16 +36,59 @@ export function Home() {
           <code>insight</code>
         </div>
       </section>
+      <LearningProgress />
+      <section className="pr-feature" aria-labelledby="pr-feature-title">
+        <div className="section-heading">
+          <div>
+            <p className="eyebrow">리뷰어가 되어 보기</p>
+            <h2 id="pr-feature-title">작은 PR, 나의 판단</h2>
+          </div>
+          <a href="#stacks" className="button">
+            전체 학습
+          </a>
+        </div>
+        <p className="intro">
+          변경된 코드를 읽고, 문제가 되는 조건과 영향을 먼저 설명해 보세요. 제출
+          후 검증된 근거와 비교합니다.
+        </p>
+        <div className="lesson-grid">
+          {["javascript-search-race", "java-member-list", "python-default-tags"]
+            .map((id) => prScenarios.find((item) => item.scenarioId === id)!)
+            .map((scenario) => (
+              <a
+                className="lesson-card"
+                key={scenario.scenarioId}
+                href={`#review/${scenario.scenarioId}`}
+              >
+                <div className="lesson-meta">
+                  <span className={`language-mark ${scenario.language}`}>
+                    {
+                      stacks.find((stack) => stack.id === scenario.language)
+                        ?.symbol
+                    }
+                  </span>
+                  <span>{stackName(scenario.language)} · 실무</span>
+                </div>
+                <h3>{scenario.title}</h3>
+                <p>{scenario.summary}</p>
+                <div className="lesson-bottom">
+                  <span>변경 읽기 · 의견 작성 · 근거 비교</span>
+                  <Icon name="arrow" />
+                </div>
+              </a>
+            ))}
+        </div>
+      </section>
       <section aria-labelledby="lessons-title">
         <div className="section-heading">
           <div>
             <p className="eyebrow">작은 코드, 새로운 발견</p>
             <h2 id="lessons-title">오늘의 실습</h2>
           </div>
-          <span className="quiet">3개의 무료 시나리오</span>
+          <span className="quiet">총 {scenarios.length}개의 무료 시나리오</span>
         </div>
         <div className="lesson-grid">
-          {scenarios.map((scenario, index) => (
+          {quizScenarios.map((scenario, index) => (
             <a
               className="lesson-card"
               href={`#trace/${scenario.scenarioId}`}

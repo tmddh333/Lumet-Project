@@ -32,12 +32,13 @@ Build a mobile-first, stack-agnostic developer learning product: read code, trac
 7. **Theme correctness:** implement system-default dark/light mode, explicit user override, storage persistence, both-theme readability and reduced-motion.
 8. **Free core loop:** do not gate explanation or basic trace behind payment.
 
-## Current prototype
+## Current app
 
-- The `prototype/` directory is a **design prototype** written in dependency-free HTML/CSS/JS, not the production React app or actual code runner.
-- Run: `python3 -m http.server 4173 --directory prototype`.
-- Check: `python3 scripts/check_project.py`.
-- Future production migration may adopt React + TypeScript + Vite; preserve behavior and tests before deleting the prototype.
+- The runnable app is the static React/TypeScript/Vite PWA under `apps/web`. The historical `prototype/` and `scripts/check_project.py` were not supplied in this repository.
+- Run from the root: `npm ci`, then `npm run dev` (use Vite's printed URL).
+- Production/PWA preview: `npm run build && npm run preview`.
+- Check: `npm run check` (requires Java 17+, Python 3.11+ and Playwright Chromium).
+- All traces are bundled curated scenarios, never an actual browser code runner. Preserve fixtures, language-specific runtime verification and reviewer-first reveal behavior.
 
 ## Suggested first task
 

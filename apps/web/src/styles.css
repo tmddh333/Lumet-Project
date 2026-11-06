@@ -923,3 +923,229 @@ textarea {
     scroll-behavior: auto !important;
   }
 }
+
+/* Practical review and learning paths reuse the existing theme tokens. */
+.learning-progress {
+  margin: 0 0 36px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+}
+.learning-progress .section-heading {
+  margin-bottom: 10px;
+}
+.learning-progress > .quiet {
+  margin-top: 8px;
+}
+.practice-choice {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  margin-top: 18px;
+  font-size: 0.84rem;
+  cursor: pointer;
+}
+.reset-progress {
+  margin-top: 14px;
+  font-size: 0.8rem;
+}
+.revisit-list {
+  margin: 20px 0;
+}
+.revisit-list h3 {
+  font-size: 0.95rem;
+}
+.pr-feature {
+  margin-bottom: 36px;
+}
+.pr-feature .intro {
+  font-size: 0.9rem;
+}
+.category-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 22px;
+}
+.category-filters button {
+  font-size: 0.8rem;
+}
+.category-filters button[aria-pressed="true"] {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--selected);
+}
+.lesson-filters {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 12px;
+  margin: 20px 0 12px;
+}
+.lesson-filters label {
+  min-width: 0;
+  font-size: 0.8rem;
+}
+.lesson-filters select {
+  display: block;
+  width: 100%;
+  margin-top: 6px;
+}
+.lesson-topic {
+  display: block;
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+.previous-value {
+  display: block;
+  font-size: 0.65rem;
+}
+.pr-brief {
+  margin-bottom: 24px;
+  padding: 20px;
+  border-left: 3px solid var(--accent);
+  background: var(--elevated);
+  border-radius: 0 10px 10px 0;
+}
+.pr-brief > p + p {
+  margin: 10px 0 18px;
+  font-size: 0.9rem;
+}
+.pr-brief h2 {
+  font-size: 0.95rem;
+}
+.pr-brief ul {
+  padding-left: 20px;
+  font-size: 0.88rem;
+  margin-bottom: 0;
+}
+.pr-layout {
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+}
+.pr-layout select {
+  width: 100%;
+  font-size: 0.85rem;
+}
+.diff-scroll {
+  overflow-x: auto;
+  background: var(--code);
+}
+.diff-scroll:focus-visible {
+  outline-offset: -4px;
+}
+.diff-lines {
+  min-width: 100%;
+  width: max-content;
+  padding: 8px 0;
+}
+.diff-line {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  width: 100%;
+  padding: 6px 16px 6px 8px;
+  border: 0;
+  border-left: 3px solid transparent;
+  border-radius: 0;
+  font-size: 0.8rem;
+  font-weight: 400;
+  text-align: left;
+  background: transparent;
+  color: var(--text);
+}
+.diff-line code {
+  white-space: pre;
+}
+.diff-old,
+.diff-new {
+  color: var(--muted);
+  min-width: 23px;
+  padding-right: 6px;
+  text-align: right;
+  font-size: 0.7rem;
+}
+.diff-marker {
+  min-width: 20px;
+  text-align: center;
+  font-weight: 750;
+}
+.diff-line.added {
+  background: var(--success-bg);
+}
+.diff-line.added .diff-marker {
+  color: var(--success);
+}
+.diff-line.removed {
+  background: var(--elevated);
+  color: var(--muted);
+}
+.diff-line.selected-line {
+  border-left-color: var(--accent);
+  background: var(--selected);
+}
+.diff-line:focus-visible {
+  outline-offset: -3px;
+}
+.review-hints {
+  margin-bottom: 18px;
+}
+.review-hints button {
+  font-size: 0.8rem;
+}
+.review-hints ul {
+  padding-left: 20px;
+  font-size: 0.84rem;
+  color: var(--muted);
+}
+.review-comparison {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 24px;
+  margin-top: 24px;
+}
+.review-comparison > div {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.review-comparison h3 {
+  font-size: 1rem;
+}
+.review-comparison dt {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-top: 14px;
+}
+.review-comparison dd {
+  margin: 4px 0 0;
+  font-size: 0.85rem;
+}
+.pr-feedback {
+  background: var(--surface);
+}
+.pr-feedback > .quiet {
+  color: var(--muted);
+}
+.fix-example {
+  margin-top: 22px;
+}
+.fix-example h3 {
+  margin-bottom: 14px;
+}
+@media (max-width: 700px) {
+  .pr-layout,
+  .review-comparison {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .learning-progress {
+    padding: 16px;
+  }
+  .lesson-filters {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .pr-feature .section-heading .button {
+    font-size: 0.76rem;
+    padding: 10px;
+  }
+}

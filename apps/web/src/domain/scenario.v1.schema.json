@@ -1,0 +1,132 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "urn:lumet:scenario:v1",
+  "title": "Scenario v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "scenarioId",
+    "title",
+    "summary",
+    "language",
+    "languageVersion",
+    "topic",
+    "executionKind",
+    "preconditions",
+    "code",
+    "visualization",
+    "steps",
+    "review",
+    "verification"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "scenarioId": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+    "title": { "$ref": "#/definitions/text" },
+    "summary": { "$ref": "#/definitions/text" },
+    "language": { "$ref": "#/definitions/text" },
+    "languageVersion": { "$ref": "#/definitions/text" },
+    "topic": { "$ref": "#/definitions/text" },
+    "executionKind": {
+      "enum": ["curated_simulation", "recorded_runtime_trace"]
+    },
+    "preconditions": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/definitions/text" }
+    },
+    "code": { "$ref": "#/definitions/text" },
+    "visualization": { "$ref": "#/definitions/visualization" },
+    "steps": {
+      "type": "array",
+      "minItems": 2,
+      "items": { "$ref": "#/definitions/traceStep" }
+    },
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["question", "options", "answer", "rationale"],
+      "properties": {
+        "question": { "$ref": "#/definitions/text" },
+        "options": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "text"],
+            "properties": {
+              "id": { "$ref": "#/definitions/text" },
+              "text": { "$ref": "#/definitions/text" }
+            }
+          }
+        },
+        "answer": { "$ref": "#/definitions/text" },
+        "rationale": { "$ref": "#/definitions/text" }
+      }
+    },
+    "verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["method", "reference", "sources"],
+      "properties": {
+        "method": { "const": "runtime_test" },
+        "reference": { "$ref": "#/definitions/text" },
+        "sources": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "pattern": "^https://" }
+        }
+      }
+    },
+    "aiInterpretation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "text"],
+      "properties": {
+        "kind": { "const": "ai_interpretation" },
+        "text": { "$ref": "#/definitions/text" }
+      }
+    }
+  },
+  "definitions": {
+    "text": { "type": "string", "minLength": 1 },
+    "visualization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "schemaVersion", "fields"],
+      "properties": {
+        "type": { "const": "variables" },
+        "schemaVersion": { "const": 1 },
+        "fields": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "type"],
+            "properties": {
+              "name": { "$ref": "#/definitions/text" },
+              "type": { "$ref": "#/definitions/text" }
+            }
+          }
+        }
+      }
+    },
+    "traceStep": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "line", "state", "explanation"],
+      "properties": {
+        "id": { "type": "integer", "minimum": 0 },
+        "line": { "type": ["integer", "null"], "minimum": 1 },
+        "state": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        },
+        "explanation": { "$ref": "#/definitions/text" }
+      }
+    }
+  }
+}

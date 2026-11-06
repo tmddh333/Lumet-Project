@@ -1,16 +1,25 @@
-import { useState, type FormEvent } from "react";
-import type { Scenario } from "../domain/scenario";
+import { useEffect, useState, type FormEvent } from "react";
+import type { QuizScenario } from "../domain/scenario";
+import { useLearning } from "../hooks/useLearning";
 import { CodeBlock } from "../components/CodeBlock";
 import { ScenarioInfo } from "../components/ScenarioInfo";
 
-export function ReviewChallenge({ scenario }: { scenario: Scenario }) {
+export function ReviewChallenge({ scenario }: { scenario: QuizScenario }) {
+  const { recordReview, visit } = useLearning();
+  useEffect(
+    () => visit(scenario.scenarioId, "review"),
+    [scenario.scenarioId, visit],
+  );
   const [answer, setAnswer] = useState("");
   const [reason, setReason] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const correct = answer === scenario.review.answer;
   function submit(event: FormEvent) {
     event.preventDefault();
-    if (answer) setSubmitted(true);
+    if (answer) {
+      setSubmitted(true);
+      recordReview(scenario.scenarioId, !correct);
+    }
   }
 
   return (

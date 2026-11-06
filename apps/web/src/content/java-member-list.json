@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 2,
+  "scenarioId": "java-member-list",
+  "title": "참여자 목록 초기화 변경",
+  "summary": "참여자를 수정하고 추가하는 경로를 검토해 보세요.",
+  "language": "java",
+  "languageVersion": "17",
+  "topic": "컬렉션·API 계약",
+  "level": "practice",
+  "executionKind": "curated_simulation",
+  "preconditions": [
+    "Java 17, java.util.*를 import한 메서드 내부",
+    "set으로 이름을 수정한 뒤 add로 새 참여자를 추가",
+    "exception은 테스트 하네스가 관찰한 예외 이름이며 앱의 실제 실행 로그가 아님"
+  ],
+  "code": "List<String> names = Arrays.asList(\"Ada\", \"Lin\");\nnames.set(0, \"Grace\");\nnames.add(\"Kai\");",
+  "visualization": {
+    "type": "variables",
+    "schemaVersion": 1,
+    "fields": [
+      {
+        "name": "names",
+        "type": "List<String>"
+      },
+      {
+        "name": "exception",
+        "type": "관찰된 예외"
+      }
+    ]
+  },
+  "steps": [
+    {
+      "id": 0,
+      "line": null,
+      "state": {},
+      "explanation": "먼저 제출한 리뷰와 비교할 준비를 해 보세요. 아직 샘플을 진행하지 않았습니다."
+    },
+    {
+      "id": 1,
+      "line": 1,
+      "state": {
+        "names": "[Ada, Lin]",
+        "exception": "없음"
+      },
+      "explanation": "Arrays.asList가 배열에 연결된 고정 크기 리스트를 만듭니다."
+    },
+    {
+      "id": 2,
+      "line": 2,
+      "state": {
+        "names": "[Grace, Lin]",
+        "exception": "없음"
+      },
+      "explanation": "set은 크기를 바꾸지 않아 허용됩니다. 첫 원소가 Grace로 바뀝니다."
+    },
+    {
+      "id": 3,
+      "line": 3,
+      "state": {
+        "names": "[Grace, Lin]",
+        "exception": "UnsupportedOperationException"
+      },
+      "explanation": "add는 리스트 크기를 바꾸려 하므로 UnsupportedOperationException이 발생합니다. 새 이름은 추가되지 않습니다."
+    }
+  ],
+  "review": {
+    "mode": "pull_request",
+    "filePath": "Members.java",
+    "context": "초기 참여자 목록을 만드는 코드를 줄였습니다. 기존 이름 변경과 새 참여자 추가 요구사항을 유지해야 합니다.",
+    "requirements": [
+      "기존 이름을 수정할 수 있어야 합니다.",
+      "새 참여자를 목록에 추가할 수 있어야 합니다."
+    ],
+    "beforeCode": "List<String> names = new ArrayList<>(Arrays.asList(\"Ada\", \"Lin\"));\nnames.set(0, \"Grace\");\nnames.add(\"Kai\");",
+    "hints": [
+      "이름 수정과 참여자 추가가 같은 종류의 변경일까요?",
+      "리스트 구현체가 허용하는 연산 범위를 확인해 보세요."
+    ],
+    "finding": {
+      "lines": [1, 3],
+      "category": "exception",
+      "rationale": "Arrays.asList는 원소 교체가 가능한 고정 크기 리스트입니다. 추가 연산은 지원하지 않아 요청이 예외로 끝납니다.",
+      "condition": "초기화한 리스트에 새 원소를 add하는 경우",
+      "impact": "새 참여자를 추가하지 못하고 예외가 발생합니다.",
+      "test": "set 후 add를 호출해 최종 목록이 [Grace, Lin, Kai]인지 검사합니다."
+    },
+    "fix": {
+      "code": "List<String> names = new ArrayList<>(Arrays.asList(\"Ada\", \"Lin\"));\nnames.set(0, \"Grace\");\nnames.add(\"Kai\");",
+      "explanation": "크기를 변경할 필요가 있으므로 ArrayList로 복사해 수정 가능한 리스트를 만듭니다."
+    }
+  },
+  "verification": {
+    "method": "runtime_test",
+    "reference": "tests/runtime/pr-scenarios.test.mjs#java-member-list",
+    "sources": [
+      "https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Arrays.html#asList(T...)"
+    ]
+  }
+}

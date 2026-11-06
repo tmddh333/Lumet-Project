@@ -2,7 +2,7 @@ import { StrictMode } from "react";
 import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import App from "../src/App";
-import { scenarios } from "../src/content/catalog";
+import { quizScenarios } from "../src/content/catalog";
 import { setSystemDark } from "./setup";
 
 function navigate(hash: string) {
@@ -60,7 +60,7 @@ describe("free learning loop", () => {
     await user.type(screen.getByRole("searchbox"), "unknown-stack");
     expect(screen.getByText(/검색 결과가 없습니다/)).toBeVisible();
   });
-  it.each(scenarios)(
+  it.each(quizScenarios)(
     "$language synchronizes code, values, explanation and review feedback",
     async (scenario) => {
       const user = userEvent.setup();
